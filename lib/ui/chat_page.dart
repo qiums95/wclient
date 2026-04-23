@@ -19,6 +19,7 @@ class _ChatPageState extends State<ChatPage> {
   void initState() {
     super.initState();
 
+    DataManager().activeChatId == widget.chatId;
     // 使用 WidgetsBinding 延迟到第一帧渲染结束后再发起历史记录请求
     WidgetsBinding.instance.addPostFrameCallback((_) {
       DataManager().loadChatHistory(widget.chatId);
@@ -27,6 +28,9 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   void dispose() {
+    if (DataManager().activeChatId == widget.chatId) {
+      DataManager().activeChatId = null;
+    }
     _textController.dispose();
     super.dispose();
   }

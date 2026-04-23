@@ -5,7 +5,11 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 // 导入页面和管理器
 import 'package:wclient/ui/home_page.dart';
 import 'package:wclient/managers/data_manager.dart';
-import 'package:wclient/managers/connection_manager.dart'; // 引入新的网络管理器
+import 'package:wclient/managers/connection_manager.dart';
+import 'package:wclient/managers/notification_manager.dart';
+
+
+final GlobalKey<NavigatorState> globalNavKey = GlobalKey<NavigatorState>();
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +23,9 @@ Future<void> _initApp() async {
       sqfliteFfiInit();
       databaseFactory = databaseFactoryFfi;
     }
+
+    await NotificationManager().init();
+
     await DataManager().loadSessions();
     ConnectionManager().start('');
   } catch (e) {
@@ -33,6 +40,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'WeChat Flutter',
+      navigatorKey: globalNavKey,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.green,

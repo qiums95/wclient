@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:wclient/services/database/database_service.dart';
 import 'package:wclient/managers/message_manager.dart';
+import 'package:wclient/managers/notification_manager.dart';
 
 import 'package:wclient/models/receive_message_model.dart';
 import 'package:wclient/models/profile_message_model.dart';
@@ -69,6 +70,18 @@ class DataManager extends ChangeNotifier {
     // 3. 如果当前正在和这个人聊天，将新消息推入活跃列表
     if (message.chatId == activeChatId) {
       activeMessages.insert(0, message);
+    }
+
+    if (DataManager().activeChatId != message.chatId) {
+
+      // 获取发送者的昵称（如果没有 getDisplayName 方法，你可以直接用 msg.senderId 或其他字段代替）
+      String senderName = DataManager().getDisplayName(message.chatId);
+
+      NotificationManager().showMessageNotification(
+        title: senderName,
+        body: message.content,
+        payload: message.chatId, // 把 chatId 传过去，点击横幅时就能跳进他的聊天页面
+      );
     }
 
     notifyListeners(); // 触发全应用相关 UI 刷新
